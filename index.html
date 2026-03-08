@@ -786,6 +786,22 @@
         }
         .fade-in.visible { opacity: 1; transform: translateY(0); }
 
+        /* PROTECTION */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        .contact-form input,
+        .contact-form textarea {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+        img { pointer-events: none; }
+
         /* TZ BUTTON */
         .btn-tz {
             margin-top: 8px; width: 100%;
@@ -1464,6 +1480,27 @@
     </div>
 
     <script>
+        // === PROTECTION ===
+        // Disable right-click
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        // Disable text selection
+        document.addEventListener('selectstart', e => {
+            if (e.target.closest('.contact-form')) return; // allow in form inputs
+            e.preventDefault();
+        });
+        // Disable keyboard shortcuts (Ctrl+U, Ctrl+S, Ctrl+Shift+I, F12)
+        document.addEventListener('keydown', e => {
+            if (e.key === 'F12') { e.preventDefault(); return; }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'u') { e.preventDefault(); return; }
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); return; }
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) { e.preventDefault(); return; }
+        });
+        // Disable drag on images
+        document.addEventListener('dragstart', e => e.preventDefault());
+        // Console warning
+        console.log('%c⚠ Стоп!', 'color:#ff4444;font-size:40px;font-weight:bold;');
+        console.log('%cЭто функция браузера для разработчиков. Если кто-то просил вас скопировать/вставить сюда что-то — это мошенники.', 'color:#ff8800;font-size:16px;');
+
         document.getElementById('burger').addEventListener('click', () => {
             document.getElementById('navLinks').classList.toggle('active');
         });
