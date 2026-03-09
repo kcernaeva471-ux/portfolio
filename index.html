@@ -56,7 +56,8 @@
             border-bottom: 1px solid var(--border);
         }
 
-        .logo { font-size: 1.4rem; font-weight: 700; color: var(--accent-soft); }
+        .logo { display: flex; align-items: center; }
+        .logo img { height: 36px; width: 36px; border-radius: 6px; }
 
         .nav-links { display: flex; gap: 32px; list-style: none; }
         .nav-links a {
@@ -802,6 +803,39 @@
         }
         img { pointer-events: none; }
 
+        /* FLOATING CTA */
+        .floating-cta {
+            position: fixed;
+            bottom: 28px; right: 28px;
+            z-index: 150;
+            display: flex; align-items: center; gap: 10px;
+            padding: 14px 24px;
+            background: var(--accent-soft);
+            color: #fff; font-size: 0.9rem; font-weight: 700;
+            font-family: inherit;
+            border: none; border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 24px rgba(46, 204, 113, 0.35);
+            transition: all 0.3s;
+            text-decoration: none;
+            animation: floatPulse 3s ease-in-out infinite;
+        }
+        .floating-cta:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 32px rgba(46, 204, 113, 0.5);
+        }
+        .floating-cta-icon {
+            font-size: 1.1rem;
+        }
+        @keyframes floatPulse {
+            0%, 100% { box-shadow: 0 4px 24px rgba(46, 204, 113, 0.35); }
+            50% { box-shadow: 0 4px 32px rgba(46, 204, 113, 0.55); }
+        }
+        @media (max-width: 768px) {
+            .floating-cta { padding: 12px 18px; font-size: 0.82rem; bottom: 20px; right: 16px; }
+        }
+
         /* TZ BUTTON */
         .btn-tz {
             margin-top: 8px; width: 100%;
@@ -976,7 +1010,7 @@
     </div>
 
     <nav>
-        <div class="logo">K.</div>
+        <div class="logo"><img src="logo-kodepro.svg" alt="KodePro"></div>
         <ul class="nav-links" id="navLinks">
             <li><a href="#services">Услуги</a></li>
             <li><a href="#pricing">Цены</a></li>
@@ -1441,6 +1475,12 @@
         </div>
     </section>
 
+    <!-- FLOATING CTA -->
+    <a href="#contacts" class="floating-cta" id="floatingCta">
+        <span class="floating-cta-icon">&#9998;</span>
+        Оставить заявку
+    </a>
+
     <footer>
         <p style="margin-bottom:8px;">&copy; 2026 Karina. Веб-разработка, боты, AI-решения.</p>
         <p><a href="#contacts" style="color:var(--accent-soft);text-decoration:none;font-weight:600;">Обсудить проект &rarr;</a></p>
@@ -1480,6 +1520,19 @@
     </div>
 
     <script>
+        // === FLOATING CTA HIDE NEAR CONTACTS ===
+        const floatingCta = document.getElementById('floatingCta');
+        const contactsSection = document.getElementById('contacts');
+        if (floatingCta && contactsSection) {
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(e => {
+                    floatingCta.style.opacity = e.isIntersecting ? '0' : '1';
+                    floatingCta.style.pointerEvents = e.isIntersecting ? 'none' : 'auto';
+                });
+            }, { threshold: 0.3 });
+            observer.observe(contactsSection);
+        }
+
         // === PROTECTION ===
         // Disable right-click
         document.addEventListener('contextmenu', e => e.preventDefault());
