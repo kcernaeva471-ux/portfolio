@@ -1513,12 +1513,42 @@
         }, { threshold: 0.1 });
         document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
 
-        function handleSubmit(e) {
+        async function handleSubmit(e) {
             e.preventDefault();
-            const btn = e.target.querySelector('button');
-            btn.textContent = 'Отправлено!';
-            btn.style.background = '#2ecc71';
-            setTimeout(() => { btn.textContent = 'Отправить заявку'; btn.style.background = ''; e.target.reset(); }, 2000);
+            const btn = e.target.querySelector('button[type="submit"]');
+            const inputs = e.target.querySelectorAll('input, textarea');
+            const name = inputs[0].value.trim();
+            const contact = inputs[1].value.trim();
+            const task = inputs[2].value.trim();
+
+            btn.textContent = 'Отправка...';
+            btn.disabled = true;
+
+            const text = `📩 Новая заявка с сайта!\n\n👤 Имя: ${name}\n📱 Контакт: ${contact}\n📝 Задача: ${task || 'Не указана'}\n\n🕐 ${new Date().toLocaleString('ru-RU')}`;
+
+            try {
+                // 1. Telegram
+                await fetch(`https://api.telegram.org/bot8606457702:AAFWWk9VG05npJKx44Sr7UJXVGTOgvV21g4/sendMessage`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ chat_id: 2024593379, text, parse_mode: 'HTML' })
+                });
+
+                // 2. Email via FormSubmit (backup)
+                fetch('https://formsubmit.co/ajax/hello@kodepro.ru', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ name, contact, message: task, _subject: 'Новая заявка с KodePro' })
+                }).catch(() => {});
+
+                btn.textContent = '✓ Отправлено!';
+                btn.style.background = '#2ecc71';
+                setTimeout(() => { btn.textContent = 'Отправить заявку'; btn.style.background = ''; btn.disabled = false; e.target.reset(); }, 2500);
+            } catch (err) {
+                btn.textContent = 'Ошибка. Попробуйте ещё раз';
+                btn.style.background = '#e74c3c';
+                setTimeout(() => { btn.textContent = 'Отправить заявку'; btn.style.background = ''; btn.disabled = false; }, 2000);
+            }
         }
 
         // Matrix rain
